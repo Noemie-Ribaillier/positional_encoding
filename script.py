@@ -98,3 +98,43 @@ pos = np.random.randint(MAX_SEQUENCE_LENGTH)
 k = 2
 print(tf.norm(pos_encoding[0,pos,:] -  pos_encoding[0,pos + k,:]))
 
+
+#####################################################################################################################
+#####                                       COMPARE POSITIONAL ENCODINGS                                        #####
+#####################################################################################################################
+
+# Compute the correlation between the positional encodings
+tf_corr = tf.matmul(pos_encoding, pos_encoding, transpose_b=True)
+# Transform to numpy array
+np_corr = tf_corr.numpy()
+# Take the 1st element to remove the batch dimensions
+corr = np_corr[0]
+
+# Plot the correlation between the positional encodings
+plt.pcolormesh(corr, cmap='RdBu')
+plt.xlabel('Position')
+plt.xlim((0, MAX_SEQUENCE_LENGTH))
+plt.ylabel('Position')
+plt.colorbar()
+plt.show()
+
+
+# Compute the Euclidean distance between the positional encoding
+# Fill the matrix with 0
+eu = np.zeros((MAX_SEQUENCE_LENGTH, MAX_SEQUENCE_LENGTH))
+print(eu.shape)
+# Iterate on the rows
+for a in range(MAX_SEQUENCE_LENGTH):
+    # Iterate on the columns
+    for b in range(a + 1, MAX_SEQUENCE_LENGTH):
+        eu[a, b] = tf.norm(tf.math.subtract(pos_encoding[0, a], pos_encoding[0, b]))
+        # Euclidean distance is symmetric
+        eu[b, a] = eu[a, b]
+
+# Plot the Euclidean distance between the positional encoding
+plt.pcolormesh(eu, cmap='RdBu')
+plt.xlabel('Position')
+plt.xlim((0, MAX_SEQUENCE_LENGTH))
+plt.ylabel('Position')
+plt.colorbar()
+plt.show()
