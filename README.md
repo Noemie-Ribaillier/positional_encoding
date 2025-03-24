@@ -50,3 +50,31 @@ We tokenize and pad the raw text. We get a matrix with one row for each sentence
 The embedding array has dimensions too hard to plot on a 2D graph. So, to make the visualization easier, we use PCA to reduce the dimensions (from 100 features of the GloVe embedding to only 2 components). 
 The plot is the same for both sentence, meaning that if we take only the embedding, the data is the same so the order information is not kept.
 
+
+### PCA
+Principal Component Analysis (PCA) is a dimensionality reduction technique used to reduce the number of features (dimensions) in a dataset while retaining as much of the original variance (information) as possible. It transforms the original features into a new set of orthogonal (uncorrelated) features called principal components.
+
+Main steps of the PCA:
+* Standardize the data: PCA works best when the data is normalized (mean = 0 and variance = 1) for each feature
+* Compute the covariance matrix: the covariance matrix captures the relationships between features in the data (how features vary together)
+* Calculate eigenvalues and eigenvectors: these represent the directions (principal components) in which the data has the most variance. The eigenvalues tell us how much variance there is in the direction of the corresponding eigenvector
+* Sort the eigenvalues and eigenvectors: the eigenvectors are sorted in descending order of their eigenvalues. The first eigenvector corresponds to the direction of the highest variance in the data
+* Select the top k components: choose the top k eigenvectors that correspond to the largest eigenvalues, which represent the most important directions in the data. In our case, because we want to plot on a 2D graph, we choose k=2.
+* Transform the data: project the original data onto the selected principal components to reduce the dimensionality
+
+
+## Word embedding vs positional encoding
+In this part, we compare if the positional encoding influence the word embeddings.
+Then, we are setting up different weights for embeddings and positional encodings to check their relationship.
+
+
+### Relationship between word embeddings and positional encoding (when weights are equal)
+We notice that the plot changed compared to when we only take into account the word embeddings. In the plot which corresponds to the sentence where words are randomly ordered, some words appear more close by such as "red" and "wolf" (because they are close by in the sentence).
+
+
+### Relationship between word embeddings and positional encoding (when embeddings weight are higher than positional encoding weight)
+The plot looks very similar to the original embeddings visualization and there are only a few changes between the positions of the plotted words. The word embeddings are dominating the positional encoding vectors.
+
+
+### Relationship between word embeddings and positional encoding (when embeddings weight are lower than positional encoding weight)
+The arrangement of the words takes a clockwise or anti-clockwise order depending on the position of the words in the sentence. The positional encoding vectors are dominating the embedding. 
