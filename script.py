@@ -287,3 +287,64 @@ plt.suptitle('Plot the word embeddings of each sentence')
 plt.show()
 
 
+#####################################################################################################################
+#####                           VISUALIZATION OF WORD EMBEDDING & POSITIONAL ENCODING                           #####
+#####################################################################################################################
+
+# Determine equal weights for word embedding and positional encoding
+embedding_weight = 1
+positional_weight = 1
+
+# Get the weighted sum of word embedding and positional encoding
+embedding_pos_encoding = embedding * embedding_weight + pos_encoding[:,:,:] * positional_weight
+
+# Plot the relationship between word embedding and positional encoding for each sentence to compare (first apply PCA)
+plt.subplot(1,2,1)
+pca_plot(sequences, 0, pca(embedding_pos_encoding, sequences, 0))
+plt.title('Sentence: '+texts[0], fontsize=8)
+plt.subplot(1,2,2)
+pca_plot(sequences, 1, pca(embedding_pos_encoding, sequences, 1))
+plt.title('Sentence: '+texts[1], fontsize=8)
+plt.suptitle('Plot the word embedding (weight='+str(embedding_weight)+
+             ') combined with positional encoding (weight='+str(positional_weight)+') of each sentence')
+plt.show()
+
+
+# Determine higher weights for word embedding than positional encoding
+embedding_weight = 10
+positional_weight = 1
+
+# Get the weighted sum of word embedding and positional encoding
+embedding_pos_encoding = embedding * embedding_weight + pos_encoding[:,:,:] * positional_weight
+
+# Plot the relationship between word embedding and positional encoding for each sentence to compare (first apply PCA)
+plt.subplot(1,2,1)
+pca_plot(sequences, 0, pca(embedding_pos_encoding, sequences, 0))
+plt.title('Sentence: '+texts[0], fontsize=8)
+plt.subplot(1,2,2)
+pca_plot(sequences, 1, pca(embedding_pos_encoding, sequences, 1))
+plt.title('Sentence: '+texts[1], fontsize=8)
+plt.suptitle('Plot the word embedding (weight='+str(embedding_weight)+
+             ') combined with positional encoding (weight='+str(positional_weight)+') of each sentence')
+plt.show()
+
+
+# Determine lower weights for word embeddings than positional encoding
+embedding_weight = 1
+positional_weight = 10
+
+# Get the weighted sum of word embedding and positional encoding
+embedding_pos_encoding = embedding * embedding_weight + pos_encoding[:,:,:] * positional_weight
+
+# Plot the relationship between word embedding and positional encoding for each sentence to compare (first apply PCA)
+plt.subplot(1,2,1)
+pca_plot(sequences, 0, pca(embedding_pos_encoding, sequences, 0))
+plt.title('Sentence: '+texts[0], fontsize=8)
+plt.subplot(1,2,2)
+pca_plot(sequences, 1, pca(embedding_pos_encoding, sequences, 1))
+plt.title('Sentence: '+texts[1], fontsize=8)
+plt.suptitle('Plot the word embedding (weight='+str(embedding_weight)+
+             ') combined with positional encoding (weight='+str(positional_weight)+') of each sentence')
+plt.show()
+
+
