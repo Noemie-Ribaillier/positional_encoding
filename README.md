@@ -32,3 +32,6 @@ The visualization will display a matrix in which:
 * the main diagonal is 0 (because the distance between same vector is null)
 * its off-diagonal values increase as they move away from the main diagonal
 
+
+## Dataset 
+We use the pre-trained GloVe100 word embeddings. It has 400k words and each word embedding has 100 features.
