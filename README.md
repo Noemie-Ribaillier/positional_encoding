@@ -20,3 +20,15 @@ Properties of the positional encoding matrix:
 
 The positional encoding matrix help to visualize how each vector is unique for every position. 
 
+
+### Visualization of positional encoding with correlation
+We calculate the correlation between pairs of vectors at every single position. A successful positional encoder will produce a perfectly symmetric matrix:
+* maximum values are located at the main diagonal: vectors in similar positions should have the highest correlation
+* smaller values are located away from the main diagonal
+
+
+### Visualization of positional encoding with Euclidean distance
+The visualization will display a matrix in which:
+* the main diagonal is 0 (because the distance between same vector is null)
+* its off-diagonal values increase as they move away from the main diagonal
+
