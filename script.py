@@ -225,3 +225,65 @@ embedding = embedding_layer(data)
 
 # Check the shape of the embedding (the last dimension of this matrix contains the embeddings of the words in the sentence)
 print(embedding.shape)
+
+
+#####################################################################################################################
+#####                                     VISUALIZATION OF WORD EMBEDDINGS                                      #####
+#####################################################################################################################
+
+# Create the PCA function (to reduce the dimension of embedding from 100 to 2)
+def pca(embedding, sequences, sentence):
+    '''
+    Use PCA to reduce the dimension of the embedding (to plot it on a 2D graph)
+
+    Inputs:
+    embedding -- embedding matrix
+    sequences -- tokenized version of the raw input (list of indexes)
+    sentence -- index of the sentence/raw input
+
+    Returns:
+    pca_array -- array of dimension (len(sequences[sentence]),n_components) extracting the main information from the embedding matrix
+    '''
+    # Set up a PCA instance keeping 2 dimensions
+    pca = PCA(n_components=2)
+
+    # Fit the PCA instance to our data (using the specific sentence and all its elements)
+    pca_array = pca.fit_transform(embedding[sentence, 0:len(sequences[sentence]), :])
+
+    return pca_array
+
+
+# Create the plot function (on a Cartesian plane)
+def pca_plot(sequences, sentence, pca_array):
+    '''
+    Plot the PCA values on a Cartesian plane
+
+    Inputs:
+    sequences -- tokenized version of the raw input (list of indexes)
+    sentence -- index of the sentence/raw input
+    pca_array -- array of dimension (len(sequences[sentence]),n_components) extracting the main information from the embedding matrix
+    '''
+    # Set up the font size
+    plt.rcParams['font.size'] = '12'
+    
+    # Plot using the values we got from PCA (use PC1 as x index and PC2 as y index)
+    plt.scatter(pca_array[:, 0], pca_array[:, 1])
+
+    # Annotate the word to the right point on the graph
+    words = list(word_index.keys())
+    for i, index in enumerate(sequences[sentence]):
+        # We use index-1 because sequences values start with 1 while words index start with 0
+        plt.annotate(words[index-1], (pca_array[i, 0], pca_array[i, 1]))
+
+
+# Compare embeddings for each sentence (the order of the words does not affect the vector representation)
+plt.subplot(1,2,1)
+pca_plot(sequences, 0, pca(embedding, sequences, 0))
+plt.title('Sentence: '+texts[0], fontsize=8)
+plt.subplot(1,2,2)
+pca_plot(sequences, 1, pca(embedding, sequences, 1))
+plt.title('Sentence: '+texts[1], fontsize=8)
+plt.suptitle('Plot the word embeddings of each sentence')
+plt.show()
+
+
