@@ -138,3 +138,90 @@ plt.xlim((0, MAX_SEQUENCE_LENGTH))
 plt.ylabel('Position')
 plt.colorbar()
 plt.show()
+
+
+#####################################################################################################################
+#####                                         LOAD PRETRAINED EMBEDDING                                         #####
+#####################################################################################################################
+
+# Load pre-trained GloVe100 word embeddings
+# Create the dictionnary to gather the word and its embedding (word as key and embedding as value)
+embeddings_dict = {}
+# Define the directory where the GloVe file is
+GLOVE_DIR = "glove/"
+# Open the GloVe file
+f = open(os.path.join(GLOVE_DIR, 'glove.6B.100d.txt'), encoding="utf8")
+# Iterate on the line
+for line in f:
+    # Split the line
+    values = line.split()
+    # Get the 1st element, which is the word
+    word = values[0]
+    # Get the word embedding, which is the rest of the line
+    coefs = np.asarray(values[1:], dtype='float32')
+    # Add the word as a new key and the coefs as its value
+    embeddings_dict[word] = coefs
+f.close()
+
+# Print the number of words and the word embedding dimension 
+print('Found',len(embeddings_dict),'word vectors.')
+print('Dimension of 1 word embedding is:', embeddings_dict['hi'].shape)
+
+# Create 2 sentences with same words but different order 
+# (sentence 1 groups the words with similar meaning while sentence 2 orders them randomly)
+texts = ['king queen man woman dog wolf football basketball red green yellow',
+         'man queen yellow basketball green dog  woman football  king red wolf']
+
+# Apply the tokenization to the raw text
+# Create an instance of the Tokenizer class from Keras. Argument num_words limits the tokenizer to only the top MAX_NB_WORDS most frequent words in the corpus
+tokenizer = Tokenizer(num_words = MAX_NB_WORDS+1)
+# Train the tokenizer on texts and create a word index (where each word is assigned to a unique integer index based on its frequency in the dataset)
+tokenizer.fit_on_texts(texts)
+# Convert each text into a sequence of integers, where each integer represents the index of a word in the word index learned by the tokenizer
+sequences = tokenizer.texts_to_sequences(texts)
+
+# Get the dictionnary mapping each word in texts to an index
+word_index = tokenizer.word_index
+print('Found',len(word_index),'unique tokens')
+
+# Pad each sequence to the MAX_SEQUENCE_LENGTH, so add 0 at the end of each sequence such as we get MAX_SEQUENCE_LENGTH tokens per sequence
+data = pad_sequences(sequences, padding='post', maxlen=MAX_SEQUENCE_LENGTH)
+
+# 2 sentences with 50 values (MAX_SEQUENCE_LENGTH)
+print(data.shape)
+
+# Each word was replaced by the index matching it
+print(data)
+
+
+# Get the embeddings for the different words that appear in the text
+# Create a matrix full of 0. We take len(word_index) + 1 rows to keep one row full of 0 for padding or unknown tokens
+embedding_matrix = np.zeros((len(word_index) + 1, EMBEDDING_DIM))
+# Iterate on the words
+for word, i in word_index.items():
+    # Get the embedding of the specific word
+    embedding_vector = embeddings_dict.get(word)
+    # Words not found in embedding index will be left to all-zeros
+    if embedding_vector is not None:
+        # Add the embedding to the matrix if it exists
+        embedding_matrix[i] = embedding_vector
+print(embedding_matrix.shape)
+
+
+# Create an embedding layer using the weights extracted from the pre-trained GloVe100 embeddings
+embedding_layer = Embedding(
+    # Size of the vocabulary
+    len(word_index) + 1,
+    # Dimension of the dense embedding
+    EMBEDDING_DIM,
+    # Initializer for the embeddings matrix
+    embeddings_initializer=tf.keras.initializers.Constant(embedding_matrix),
+    # Whether to train, here we don't because our sample is too small (and we don't run a model)
+    trainable=False)
+
+
+# Transform the input tokenized data to the embedding using the Embedding layer
+embedding = embedding_layer(data)
+
+# Check the shape of the embedding (the last dimension of this matrix contains the embeddings of the words in the sentence)
+print(embedding.shape)
