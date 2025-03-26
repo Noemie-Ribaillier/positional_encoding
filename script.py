@@ -2,7 +2,6 @@
 #####                                                                                                           #####
 #####                                            POSITIONAL ENCODING                                            #####
 #####                                           Created on: 2025-03-23                                          #####
-#####                                           Updated on: 2025-03-24                                          #####
 #####                                                                                                           #####
 #####################################################################################################################
 
@@ -24,7 +23,7 @@ from sklearn.decomposition import PCA
 
 # Set up the right directory
 import os
-os.chdir('C:/Users/Admin/Documents/Python Projects/_embedding')
+os.chdir('C:/Users/Admin/Documents/Python Projects/positional_encoding')
 
 
 #####################################################################################################################
@@ -185,13 +184,13 @@ word_index = tokenizer.word_index
 print('Found',len(word_index),'unique tokens')
 
 # Pad each sequence to the MAX_SEQUENCE_LENGTH, so add 0 at the end of each sequence such as we get MAX_SEQUENCE_LENGTH tokens per sequence
-data = pad_sequences(sequences, padding='post', maxlen=MAX_SEQUENCE_LENGTH)
+tokenized_data = pad_sequences(sequences, padding='post', maxlen=MAX_SEQUENCE_LENGTH)
 
-# 2 sentences with 50 values (MAX_SEQUENCE_LENGTH)
-print(data.shape)
+# Print the shape: 2 sentences with 50 values (MAX_SEQUENCE_LENGTH)
+print(tokenized_data.shape)
 
 # Each word was replaced by the index matching it
-print(data)
+print(tokenized_data)
 
 
 # Get the embeddings for the different words that appear in the text
@@ -221,10 +220,10 @@ embedding_layer = Embedding(
 
 
 # Transform the input tokenized data to the embedding using the Embedding layer
-embedding = embedding_layer(data)
+embedding_data = embedding_layer(tokenized_data)
 
 # Check the shape of the embedding (the last dimension of this matrix contains the embeddings of the words in the sentence)
-print(embedding.shape)
+print(embedding_data.shape)
 
 
 #####################################################################################################################
@@ -278,10 +277,10 @@ def pca_plot(sequences, sentence, pca_array):
 
 # Compare embeddings for each sentence (the order of the words does not affect the vector representation)
 plt.subplot(1,2,1)
-pca_plot(sequences, 0, pca(embedding, sequences, 0))
+pca_plot(sequences, 0, pca(embedding_data, sequences, 0))
 plt.title('Sentence: '+texts[0], fontsize=8)
 plt.subplot(1,2,2)
-pca_plot(sequences, 1, pca(embedding, sequences, 1))
+pca_plot(sequences, 1, pca(embedding_data, sequences, 1))
 plt.title('Sentence: '+texts[1], fontsize=8)
 plt.suptitle('Plot the word embeddings of each sentence')
 plt.show()
@@ -296,7 +295,7 @@ embedding_weight = 1
 positional_weight = 1
 
 # Get the weighted sum of word embedding and positional encoding
-embedding_pos_encoding = embedding * embedding_weight + pos_encoding[:,:,:] * positional_weight
+embedding_pos_encoding = embedding_data * embedding_weight + pos_encoding[:,:,:] * positional_weight
 
 # Plot the relationship between word embedding and positional encoding for each sentence to compare (first apply PCA)
 plt.subplot(1,2,1)
@@ -315,7 +314,7 @@ embedding_weight = 10
 positional_weight = 1
 
 # Get the weighted sum of word embedding and positional encoding
-embedding_pos_encoding = embedding * embedding_weight + pos_encoding[:,:,:] * positional_weight
+embedding_pos_encoding = embedding_data * embedding_weight + pos_encoding[:,:,:] * positional_weight
 
 # Plot the relationship between word embedding and positional encoding for each sentence to compare (first apply PCA)
 plt.subplot(1,2,1)
@@ -334,7 +333,7 @@ embedding_weight = 1
 positional_weight = 10
 
 # Get the weighted sum of word embedding and positional encoding
-embedding_pos_encoding = embedding * embedding_weight + pos_encoding[:,:,:] * positional_weight
+embedding_pos_encoding = embedding_data * embedding_weight + pos_encoding[:,:,:] * positional_weight
 
 # Plot the relationship between word embedding and positional encoding for each sentence to compare (first apply PCA)
 plt.subplot(1,2,1)
@@ -346,5 +345,3 @@ plt.title('Sentence: '+texts[1], fontsize=8)
 plt.suptitle('Plot the word embedding (weight='+str(embedding_weight)+
              ') combined with positional encoding (weight='+str(positional_weight)+') of each sentence')
 plt.show()
-
-

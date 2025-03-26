@@ -16,7 +16,7 @@ Positional encoding is computed using sine and cosine functions enabling the mod
 
 Properties of the positional encoding matrix:
 * the norm of each of the vectors is always a constant
-* the norm of the difference between 2 vectors separated by k positions is also constant. This property is important because it demonstrates that the difference does not depend on the positions of each encoding, but rather the relative seperation between encodings. Being able to express positional encodings as linear functions of one another can help the model to learn by focusing on the relative positions of words.
+* the norm of the difference between 2 vectors separated by k positions is also constant. This property is important because it demonstrates that the difference does not depend on the positions of each encoding, but rather the relative seperation between encodings. Being able to express positional encodings as linear function of one another can help the model to learn by focusing on the relative position of words.
 
 The positional encoding matrix help to visualize how each vector is unique for every position. 
 
@@ -47,8 +47,11 @@ We tokenize and pad the raw text. We get a matrix with one row for each sentence
 
 
 ## Word embeddings
-The embedding array has dimensions too hard to plot on a 2D graph. So, to make the visualization easier, we use PCA to reduce the dimensions (from 100 features of the GloVe embedding to only 2 components). 
-The plot is the same for both sentence, meaning that if we take only the embedding, the data is the same so the order information is not kept.
+We load the GloVe100 word embedding and we keep the embeddings from the words that match the words in our sentence. So, we end up with a smaller embedding matrix (number of words + 1 to keep a case of unkown word).
+We create an embedding layer and we apply it on our tokenized data. We end up with a matrix of shape (number of rows in the text, number of max words in the sequence, number of items in the embedding). So we get the word embedding of each word in each sentence, ordered by the word positions.
+
+This embedding array has dimensions too hard to plot on a 2D graph. So, to make the visualization easier, we use PCA to reduce the dimensions (from 100 features of the GloVe embedding to only 2 components). 
+The plot is the same for both sentence, meaning that if we take only the embedding (even though it's ordered per words in the sentence), the data is the same so the order information is not kept.
 
 
 ### PCA
@@ -77,4 +80,8 @@ The plot looks very similar to the original embeddings visualization and there a
 
 
 ### Relationship between word embeddings and positional encoding (when embeddings weight are lower than positional encoding weight)
-The arrangement of the words takes a clockwise or anti-clockwise order depending on the position of the words in the sentence. The positional encoding vectors are dominating the embedding. 
+The arrangement of the words takes a clockwise order. The positional encoding vectors are dominating the embedding. 
+
+
+## References
+This script is coming from the Deep Learning Specialization course. I enriched it to this new version.
